@@ -4,15 +4,35 @@
   gather_facts: no
   connection: local
   tasks:
-    - name: Create security group for building AMIs
-      ec2_group:
-        name: build-ami-sg
-        description: Security group for building AMI (ssh access from any)
+    - name: Create elb security group
+      local_action: ec2_group
+      args:
+        name: "{{ elb_sg_name }}"
+        description: elb security group (443 to 443)
         region: "{{ region }}"
         vpc_id: "{{ vpc_id }}"
         state: present
         rules:
           - proto: tcp
             cidr_ip: 0.0.0.0/0
+            from_port: 443
+            to_port: 443
+
+    - name: Create app server security group
+      local_action: ec2_group
+      args:
+        name: "{{ app_server_sg_name }}"
+        description: app server security group (from elb to 80)
+        region: "{{ region }}"
+        vpc_id: "{{ vpc_id }}"
+        state: present
+        rules:
+          - proto: tcp
+            group_name: "{{ elb_sg_name }}"
+            from_port: 80
+            to_port: 80
+          - proto: tcp
+            cidr_ip: 0.0.0.0/0
             from_port: 22
             to_port: 22
+      register: app_server_sg_res

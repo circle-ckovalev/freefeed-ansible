@@ -1,0 +1,32 @@
+---
+
+- hosts: aws
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: Create elbv2
+      local_action: elbv2
+      args:
+        vpc_id: "{{ vpc_id }}"
+        subnets: "{{ vpc_subnets | join(',') }}"
+        certificate_arn: "{{ certificate_arn }}"
+        name: "{{ elbv2_name }}"
+        target_name: "{{ elbv2_target_name }}"
+        sg_name: "{{ elb_sg_name }}"
+        healthcheck_path: "{{ elbv2_healthcheck_path }}"
+        healthcheck_http_code: "{{ elbv2_healthcheck_http_code }}"
+      register: elb_res
+
+    - name: Create route53 alias record
+      local_action: route53
+      args:
+        command: create
+        overwrite: no
+        zone: "{{ hosted_zone }}"
+        record: "{{ pepyatka_hostname }}"
+        type: A
+        value: "{{ elb_res.DNSName }}"
+        alias: True
+        alias_hosted_zone_id: "{{ elb_res.CanonicalHostedZoneId }}"
+      tags:
+        - route53

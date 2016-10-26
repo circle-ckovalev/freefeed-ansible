@@ -4,6 +4,8 @@
   apt: name=git state=present
 
 - name: Deploy vanilla
+  become: yes
+  become_user: "{{ www_user }}"
   git:
     repo: "{{ vanilla_repo }}"
     update: yes
@@ -46,10 +48,7 @@
 - name: Append md5 hashes to file urls
   command: chdir="{{ vanilla_dir }}" ./write_hash.sh
 
-- name: Fix pepyatka-lite permissions
-  file:
-    path: "{{ vanilla_dir }}"
-    owner: "{{ www_user }}"
-    group: "{{ www_group }}"
-    state: directory
-    recurse: yes
+- name: Fix permissions
+  command: "chown -R {{ www_user }}:{{ www_group }} ."
+  args:
+    chdir: "{{ vanilla_dir }}"

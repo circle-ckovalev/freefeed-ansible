@@ -7,6 +7,12 @@ localhost
 target
 ami_control_host
 
+[ami:children]
+target
+
+[ami_secrets:children]
+target
+
 [redis:children]
 target
 
@@ -19,5 +25,5 @@ target
 [pepyatka-frontend:children]
 target
 
-[admin:children]
+[admins:children]
 target

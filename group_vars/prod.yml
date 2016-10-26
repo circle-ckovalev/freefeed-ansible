@@ -1,0 +1,80 @@
+---
+
+pepyatka_hostname: freefeed.net
+pepyatka_media_hostname: media.freefeed.net
+pepyatka_frontend_scheme: https
+pepyatka_statsd_prefix: freefeed
+pepyatka_server_branch: release
+pepyatka_ansible_branch: freefeed
+pepyatka_redis_host: localhost
+pepyatka_storage_type: s3
+pepyatka_s3_bucket: freefeed-media
+pepyatka_accept_hashed_passwords_only: 'false'
+pepyatka_ga_account: 'UA-62517081-1'
+pepyatka_deploy_inventory: prod
+
+react_client_branch: release
+react_client_hostname: freefeed.net
+
+vanilla_enabled: true
+vanilla_branch: release
+vanilla_hostname: m.freefeed.net
+vanilla_lead_domain: FreeFeed
+
+nginx_restrict_users_ip: 136.243.23.88
+nginx_use_proxy_protocol: True
+nginx_proxy_protocol_real_ips:
+  - 172.31.0.0/16
+
+auth_token_prefix: freefeedBETA_
+recaptcha_enabled: true
+recaptcha_sitekey: 6LdChhITAAAAAGzgvUPPCbg0cxJzcxFc5vlBs9u5
+
+new_relic_app_name: "FreeFeed Production"
+
+route53_records:
+  - name: www.freefeed.net
+    value: freefeed.net.
+    type: CNAME
+    ttl: 60
+  - name: api.freefeed.net
+    value: freefeed.net.
+    type: CNAME
+    ttl: 300
+  - name: m.freefeed.net
+    value: freefeed.net.
+    type: CNAME
+    ttl: 300
+  - name: media.freefeed.net
+    value: freefeed.net.
+    type: CNAME
+    ttl: 300
+  - name: clio.freefeed.net
+    value: 136.243.23.88
+    type: A
+    ttl: 300
+  - name: vonnegut.freefeed.net
+    value: 136.243.23.88
+    type: A
+    ttl: 1800
+  - name: dev.freefeed.net
+    value: vonnegut.freefeed.net
+    type: CNAME
+    ttl: 300
+  - name: developer.freefeed.net
+    value: freefeed.github.io.
+    type: CNAME
+    ttl: 300
+  - name: gamma.freefeed.net
+    value: gamma.creagenics.com.
+    type: CNAME
+    ttl: 300
+  - name: news.freefeed.net
+    value: freefeed.net.
+    type: CNAME
+    ttl: 300
+  - name: status.freefeed.net
+    value: vonnegut.freefeed.net.
+    type: CNAME
+    ttl: 300
+

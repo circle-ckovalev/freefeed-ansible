@@ -2,3 +2,4 @@
 /playbooks/pepyatka.vault
 dev
 /plugins/callback/*.pyc
+/elbv2

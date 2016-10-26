@@ -129,6 +129,11 @@
     - pepyatka
     - newrelic
 
+- name: Ensure permissions
+  command: "chown -R {{ pepyatka_user }}:{{ pepyatka_group }} ."
+  args:
+    chdir: "{{ pepyatka_home_dir }}/pepyatka-server"
+
 - name: Run systemctl daemon-reload
   command: systemctl daemon-reload
   tags: pepyatka

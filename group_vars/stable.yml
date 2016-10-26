@@ -1,0 +1,45 @@
+---
+
+freefeed_env: stable
+elbv2_name: "{{ freefeed_env }}"
+elbv2_target_name: "{{ freefeed_env }}"
+instance_type: t2.micro
+detailed_monitoring_enabled: False
+asg_min_size: 1
+asg_max_size: 2
+asg_desired_capacity: 1
+lc_name: "{{ freefeed_env }}-lc"
+asg_name: "{{ freefeed_env }}-asg"
+sns_topic: "{{ freefeed_env }}-alarms"
+elb_sg_name: "{{ freefeed_env }}-elb-sg"
+app_server_sg_name: "{{ freefeed_env }}-app-server-sg"
+
+pepyatka_hostname: "{{ freefeed_env }}.freefeed.net"
+pepyatka_media_hostname: stable-media.freefeed.net
+pepyatka_statsd_prefix: "{{ freefeed_env }}"
+pepyatka_server_branch: "{{ freefeed_env }}"
+pepyatka_ansible_branch: development
+pepyatka_storage_type: s3
+pepyatka_s3_bucket: freefeed-storage-test
+vanilla_enabled: true
+vanilla_branch: development
+vanilla_hostname: nanopeppa.freefeed.net
+vanilla_lead_domain: "{{ freefeed_env }}"
+react_client_branch: "{{ freefeed_env }}"
+react_client_hostname: "{{ freefeed_env }}.freefeed.net"
+auth_token_prefix: micropeppa_
+new_relic_app_name: "FreeFeed Stable"
+recaptcha_enabled: false
+postgres_port: 5432
+postgres_user: stagefeed
+postgres_dbname: stagefeed
+
+route53_records:
+  - name: nanopeppa.freefeed.net
+    value: "{{ react_client_hostname }}."
+    type: CNAME
+    ttl: 300
+  - name: "{{ pepyatka_media_hostname }}"
+    value: "{{ react_client_hostname }}."
+    type: CNAME
+    ttl: 300

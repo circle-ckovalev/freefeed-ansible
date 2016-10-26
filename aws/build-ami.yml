@@ -1,9 +1,25 @@
 ---
 
+# ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -vv -i ami aws/build-ami.yml
+
 - hosts: aws
   gather_facts: no
   connection: local
   tasks:
+    - name: Create security group for building AMIs
+      local_action: ec2_group
+      args:
+        name: build-ami-sg
+        description: Security group for building AMI (ssh access from any)
+        region: "{{ region }}"
+        vpc_id: "{{ vpc_id }}"
+        state: present
+        rules:
+          - proto: tcp
+            cidr_ip: 0.0.0.0/0
+            from_port: 22
+            to_port: 22
+
     - name: Launch an ami builder instance
       ec2:
         key_name: pepyatka-aws
@@ -48,14 +64,12 @@
     - name: Stop and disable pganalyze-collector
       service: name=pganalyze-collector state=stopped enabled=false
 
-    - name: Install ansible
-      pip: name=ansible state=present
+    # TODO: figure out how to make it more secure
+    #       put on KMS?
+    - name: Copy vault password file
+      copy: src=~/.freefeed-ansible.vault dest=/root/.freefeed-ansible.vault
 
-    - name: Clone freefeed-ansible
-      git:
-        repo: "{{ pepyatka_ansible_repo }}"
-        dest: /opt/freefeed-ansible
-        force: yes
+- include: ../playbooks/check-deploy.yml
 
 - hosts: ami_control_host
   connection: local
@@ -66,7 +80,7 @@
       ec2_ami:
         instance_id: "{{ instance_id }}"
         wait: yes
-        name: freefeed-api-server
+        name: "freefeed-api-server_{{ lookup('pipe', 'date -u +%Y%m%d_%H%M%S') }}"
         region: "{{ region }}"
         tags:
           Name: freefeed-api-server

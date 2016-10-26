@@ -33,16 +33,11 @@
       when: vanilla_enabled
 
     - name: Copy vault password file
-      copy: src="{{ vault_password_file }}" dest=/root/pepyatka.vault
+      copy: src="{{ vault_password_file }}" dest=/root/.freefeed-ansible.vault
       when: vault_password_file is defined
 
     - name: Deploy check-deploy script
       template: src=check-deploy.j2 dest=/root/check-deploy mode=0700
-
-    - name: Deploy inventory for check-deploy script
-      copy:
-        src="../{{ pepyatka_deploy_inventory }}"
-        dest="/root/pepyatka-ansible/{{ pepyatka_deploy_inventory }}"
 
     - name: Create directory for check-deploy logs
       file: path="{{ pepyatka_deploy_log_dir }}" state=directory

@@ -4,6 +4,8 @@
   apt: name=git state=present
 
 - name: Deploy react-client
+  become: yes
+  become_user: "{{ www_user }}"
   git:
     repo: "{{ react_client_repo }}"
     update: yes
@@ -113,10 +115,6 @@
   command: cp "{{ react_client_dir }}/public/assets/js/bookmarklet-popup.js" "{{ react_client_dir }}/public/js/"
 
 - name: Fix permissions
-  file:
-    path: "{{ react_client_dir }}"
-    owner: "{{ www_user }}"
-    group: "{{ www_group }}"
-    state: directory
-    recurse: yes
-
+  command: "chown -R {{ www_user }}:{{ www_group }} ."
+  args:
+    chdir: "{{ react_client_dir }}"

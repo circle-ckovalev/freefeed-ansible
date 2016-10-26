@@ -1,0 +1,142 @@
+---
+
+- include: security-groups.yml
+- include: create-elbv2.yml
+- include: route53.yml
+
+- hosts: target
+  gather_facts: no
+  become: no
+  tasks:
+    - name: Get latest ami
+      local_action: ec2_ami_find
+      args:
+        region: "{{ region }}"
+        owner: "{{ account }}"
+        name: "freefeed-api-server*"
+        sort: name
+        sort_order: descending
+        sort_end: 1
+      register: ami_find
+
+    - name: Create launch configuration
+      local_action: ec2_lc
+      args:
+        name: "{{ lc_name }}"
+        security_groups:
+          - "{{ app_server_sg_res.group_id }}"
+        image_id: "{{ ami_find.results[0].ami_id }}"
+        instance_type: "{{ instance_type }}"
+        instance_profile_name: "{{ instance_profile }}"
+        instance_monitoring: "{{ detailed_monitoring_enabled }}"
+        assign_public_ip: True
+        region: "{{ region }}"
+        state: present
+        user_data: |
+          #!/bin/bash -ex
+          hostnamectl set-hostname "freefeed-{{ freefeed_env }}-$(cat /var/lib/cloud/data/instance-id)"
+          cd /root/pepyatka-ansible
+          ansible-playbook -vv -i "{{ freefeed_env }}" --connection=local playbooks/check-deploy.yml
+          cd /root
+          ./check-deploy --force
+
+    - name: Create autoscaling group
+      local_action: ec2_asg
+      args:
+        name: "{{ asg_name }}"
+        launch_config_name: "{{ lc_name }}"
+        region: "{{ region }}"
+        min_size: "{{ asg_min_size }}"
+        max_size: "{{ asg_max_size }}"
+        desired_capacity: "{{ asg_desired_capacity }}"
+        wait_timeout: 600
+        state: present
+        availability_zones: "{{ availability_zones | join(',') }}"
+        vpc_zone_identifier: "{{ vpc_subnets | join(',') }}"
+        health_check_type: EC2
+        replace_all_instances: yes
+        tags:
+          - Name: "{{ freefeed_env }}-freefeed-api-server"
+          - Env: "{{ freefeed_env }}"
+
+    - name: Add asg scale up policy
+      local_action: ec2_scaling_policy
+      args:
+        state: present
+        region: "{{ region }}"
+        name: "{{ asg_name }}-scale-up-policy"
+        adjustment_type: "ChangeInCapacity"
+        asg_name: "{{ asg_name }}"
+        scaling_adjustment: 1
+      register: asg_scale_up_policy
+
+    - name: Add asg scale down policy
+      local_action: ec2_scaling_policy
+      args:
+        state: present
+        region: "{{ region }}"
+        name: "{{ asg_name }}-asg-scale-down-policy"
+        adjustment_type: "ChangeInCapacity"
+        asg_name: "{{ asg_name }}"
+        scaling_adjustment: -1
+      register: asg_scale_down_policy
+
+    - name: Create alarm SNS topic
+      local_action: sns_topic
+      args:
+        name: "{{ sns_topic }}"
+        state: present
+        display_name: "FreeFeed {{ freefeed_env }} alarms"
+        subscriptions:
+          - endpoint: "alert@dyachkov.org"
+            protocol: "email"
+      register: sns_topic_res
+
+    - name: Add asg high cpu utilization alarm
+      local_action: ec2_metric_alarm
+      args:
+        state: present
+        region: "{{ region }}"
+        name: "{{ asg_name }}-HighCpuUtilizationAlarm"
+        description: "High CPU utilization alarm for {{ asg_name }}"
+        metric: CPUUtilization
+        namespace: "AWS/EC2"
+        statistic: Maximum
+        comparison: ">"
+        threshold: 90.0
+        period: "{{ detailed_monitoring_enabled | ternary(60, 300) }}"
+        unit: Percent
+        dimensions: {
+          AutoScalingGroupName: "{{ asg_name }}"
+        }
+        evaluation_periods: 3
+        insufficient_data_actions: "{{ sns_topic_res.sns_arn }}"
+        alarm_actions:
+          - "{{ asg_scale_up_policy.arn }}"
+          - "{{ sns_topic_res.sns_arn }}"
+        ok_actions: "{{ sns_topic_res.sns_arn }}"
+
+    - name: Add asg low cpu utilization alarm
+      local_action: ec2_metric_alarm
+      args:
+        state: present
+        region: "{{ region }}"
+        name: "{{ asg_name }}-LowCpuUtilizationAlarm"
+        description: "Low CPU utilization alarm for {{ asg_name }}"
+        metric: CPUUtilization
+        namespace: "AWS/EC2"
+        statistic: Maximum
+        comparison: "<"
+        threshold: 50.0
+        period: "{{ detailed_monitoring_enabled | ternary(60, 300) }}"
+        unit: Percent
+        dimensions: {
+          AutoScalingGroupName: "{{ asg_name }}"
+        }
+        evaluation_periods: 3
+        insufficient_data_actions: "{{ sns_topic_res.sns_arn }}"
+        alarm_actions:
+          - "{{ asg_scale_down_policy.arn }}"
+          - "{{ sns_topic_res.sns_arn }}"
+        ok_actions: "{{ sns_topic_res.sns_arn }}"
+
