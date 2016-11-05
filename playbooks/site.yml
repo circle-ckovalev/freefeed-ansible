@@ -31,7 +31,7 @@
       local_action:
         module: slack
         token: "{{ slack_token }}"
-        msg: "Updated pepyatka-server on {{ item | basename }}. <{{ pepyatka_server_repo | replace('.git', '')}}/compare/{{ lookup('file', item) }}|Changelog>"
+        msg: "pepyatka-server <{{ pepyatka_server_repo | replace('.git', '')}}/compare/{{ lookup('file', item) }}|changelog>"
       with_fileglob:
         - pepyatka-server-changelog/*
       when: slack_token is defined
@@ -42,7 +42,7 @@
       local_action:
         module: slack
         token: "{{ slack_token }}"
-        msg: "Updated react-client on {{ item | basename }}. <{{ react_client_repo | replace('.git', '')}}/compare/{{ lookup('file', item) }}|Changelog>"
+        msg: "react-client <{{ react_client_repo | replace('.git', '')}}/compare/{{ lookup('file', item) }}|changelog>"
       with_fileglob:
         - react-client-changelog/*
       when: slack_token is defined
@@ -53,7 +53,7 @@
       local_action:
         module: slack
         token: "{{ slack_token }}"
-        msg: "Updated vanilla on {{ item | basename }}. <{{ vanilla_repo | replace('.git', '')}}/compare/{{ lookup('file', item) }}|Changelog>"
+        msg: "vanilla <{{ vanilla_repo | replace('.git', '')}}/compare/{{ lookup('file', item) }}|changelog>"
       with_fileglob:
         - vanilla-changelog/*
       when: slack_token is defined and vanilla_enabled
