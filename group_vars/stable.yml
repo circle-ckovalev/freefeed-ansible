@@ -18,7 +18,7 @@ pepyatka_hostname: "{{ freefeed_env }}.freefeed.net"
 pepyatka_media_hostname: stable-media.freefeed.net
 pepyatka_statsd_prefix: "{{ freefeed_env }}"
 pepyatka_server_branch: "{{ freefeed_env }}"
-pepyatka_ansible_branch: development
+ansible_branch: use-autoscaling-groups
 pepyatka_storage_type: s3
 pepyatka_s3_bucket: freefeed-storage-test
 vanilla_enabled: true

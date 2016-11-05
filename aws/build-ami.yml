@@ -64,12 +64,15 @@
     - name: Stop and disable pganalyze-collector
       service: name=pganalyze-collector state=stopped enabled=false
 
-    # TODO: figure out how to make it more secure
-    #       put on KMS?
+    - name: Clone freefeed-ansible
+      git:
+        repo: "{{ ansible_repo }}"
+        dest: /opt/ansible
+        force: yes
+        depth: 50
+
     - name: Copy vault password file
       copy: src=~/.freefeed-ansible.vault dest=/root/.freefeed-ansible.vault
-
-- include: ../playbooks/check-deploy.yml
 
 - hosts: ami_control_host
   connection: local

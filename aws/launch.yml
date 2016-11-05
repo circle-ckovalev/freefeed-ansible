@@ -35,10 +35,11 @@
         user_data: |
           #!/bin/bash -ex
           hostnamectl set-hostname "freefeed-{{ freefeed_env }}-$(cat /var/lib/cloud/data/instance-id)"
-          cd /root/pepyatka-ansible
+          cd /opt/ansible
+          git fetch origin
+          git checkout {{ ansible_branch }}
+          git pull
           ansible-playbook -vv -i "{{ freefeed_env }}" --connection=local playbooks/check-deploy.yml
-          cd /root
-          ./check-deploy --force
 
     - name: Create autoscaling group
       local_action: ec2_asg

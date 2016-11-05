@@ -1,9 +1,3 @@
 ---
 
 ansible_ssh_user: admin
-pepyatka_ansible_branch: freefeed
-pepyatka_server_branch: release
-react_client_branch: release
-vanilla_branch: release
-vanilla_enabled: True
-pepyatka_deploy_inventory: local

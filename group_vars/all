@@ -5,7 +5,7 @@ vault_password_file: pepyatka.vault
 ansible_ssh_user: admin
 
 pepyatka_server_repo: https://github.com/freefeed/freefeed-server.git
-pepyatka_ansible_repo: https://github.com/freefeed/freefeed-ansible.git
+ansible_repo: https://github.com/freefeed/freefeed-ansible.git
 vanilla_repo: https://github.com/freefeed/freefeed-lite.git
 react_client_repo: https://github.com/freefeed/freefeed-react-client.git
 
