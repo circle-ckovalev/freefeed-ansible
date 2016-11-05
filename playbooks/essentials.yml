@@ -16,7 +16,6 @@
         - libssl-dev
         - libffi-dev
         - python-dev
-        - python-pip
         - git
         - sudo
         - mosh
@@ -26,6 +25,15 @@
         - jq
         - vim
         - dbus
+
+    - name: Ensure setuptools are not installed
+      apt: name=setuptools state=absent
+
+    - name: Fetch get-pip.py
+      get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/opt/get-pip.py
+
+    - name: Run get-pip.py
+      command: python /opt/get-pip.py
 
     - name: Install required python modules
       pip: name="{{ item }}" state=latest
