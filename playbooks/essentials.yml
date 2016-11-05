@@ -25,6 +25,7 @@
         - ntp
         - jq
         - vim
+        - dbus
 
     - name: Install required python modules
       pip: name="{{ item }}" state=latest

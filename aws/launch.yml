@@ -36,10 +36,10 @@
           #!/bin/bash -ex
           hostnamectl set-hostname "freefeed-{{ freefeed_env }}-$(cat /var/lib/cloud/data/instance-id)"
           cd /opt/ansible
-          git fetch origin
+          git fetch origin {{ ansible_branch }}:{{ ansible_branch }}
           git checkout {{ ansible_branch }}
           git pull
-          ansible-playbook -vv -i "{{ freefeed_env }}" --connection=local playbooks/check-deploy.yml
+          ansible-playbook -vv -i {{ freefeed_env }} --connection=local playbooks/check-deploy.yml
 
     - name: Create autoscaling group
       local_action: ec2_asg

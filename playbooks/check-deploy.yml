@@ -1,4 +1,4 @@
-- hosts: all:!localhost
+- hosts: all
   become: yes
   vars:
     deploy_log_dir: /var/log/deploy
