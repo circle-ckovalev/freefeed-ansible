@@ -31,6 +31,8 @@
       pip: name="{{ item }}" state=latest
       with_items:
         - httplib2
-        - ansible
         - markupsafe
         - prettytable
+
+    - name: Install ansible
+      pip: name=ansible version=2.1

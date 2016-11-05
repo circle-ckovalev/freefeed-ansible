@@ -3,6 +3,14 @@
 - name: Ensure git is installed
   apt: name=git state=present
 
+- name: Ensure target directory
+  file: path="{{ vanilla_dir }}" state=directory
+
+- name: Fix permissions
+  command: "chown -R {{ www_user }}:{{ www_group }} ."
+  args:
+    chdir: "{{ vanilla_dir }}"
+
 - name: Deploy vanilla
   become: yes
   become_user: "{{ www_user }}"

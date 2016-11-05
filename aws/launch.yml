@@ -35,6 +35,7 @@
         user_data: |
           #!/bin/bash -ex
           hostnamectl set-hostname "freefeed-{{ freefeed_env }}-$(cat /var/lib/cloud/data/instance-id)"
+          echo "127.0.0.1 $(hostname)" >> /etc/hosts
           cd /opt/ansible
           git fetch origin {{ ansible_branch }}:{{ ansible_branch }}
           git checkout {{ ansible_branch }}

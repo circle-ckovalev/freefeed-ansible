@@ -4,14 +4,6 @@
     deploy_log_dir: /var/log/deploy
     deploy_files_location: /opt
   tasks:
-    - name: Clone freefeed-ansible
-      git:
-        repo: "{{ ansible_repo }}"
-        dest: "{{ deploy_files_location }}/ansible"
-        version: "{{ ansible_branch }}"
-        force: yes
-        depth: 50
-
     - name: Clone pepyatka-server
       git:
         repo: "{{ pepyatka_server_repo }}"
