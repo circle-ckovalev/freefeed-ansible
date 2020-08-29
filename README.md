@@ -19,6 +19,13 @@ Prerequisites:
     ln -s /mnt/volume_ams3_01/postgresql /var/lib/
     systemctl restart postgres
 
+    apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+    apt-get update && apt-get install docker-ce docker-ce-cli containerd.io
+    docker network create freefeed
+    pip3 install docker
+
     su - postgres
     psql
     postgres=# create role freefeed with login encrypted password '***';
@@ -29,14 +36,11 @@ Prerequisites:
     postgres=# create extension if not exists intarray;
     postgres=# create extension if not exists tablefunc;
 
-    echo "listen_addresses = 'localhost,172.18.0.1'" > /etc/postgresql/12/main/conf.d/local.conf
-    systemctl restart postgres
+    # set listen_addresses = 'localhost,172.18.0.1'" in /etc/postgresql/12/main/postgresql.conf
+    echo 'host    all             all             172.18.0.0/16           md5' >> /etc/postgresql/12/main/pg_hba.conf
+    echo 'host    all             all             172.17.0.0/16           md5' >> /etc/postgresql/12/main/pg_hba.conf
 
-    apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
-    apt-get update && apt-get install docker-ce docker-ce-cli containerd.io
-    pip3 install docker
+    systemctl restart postgres
 
     echo "deb http://nginx.org/packages/debian $(lsb_release -cs) nginx" > /etc/apt/sources.list.d/nginx.list
     curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add -
