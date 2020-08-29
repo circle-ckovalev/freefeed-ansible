@@ -1,7 +1,7 @@
 ---
 
 freefeed_hostname: circle.ckovalev.com
-freefeed_media_hostname: circle.ckovalev.com
+freefeed_media_hostname: circle-media.ckovalev.com
 freefeed_env: release
 freefeed_s3_endpoint: ams3.digitaloceanspaces.com
 freefeed_s3_bucket: circle-ckovalev
