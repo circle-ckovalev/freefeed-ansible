@@ -56,7 +56,6 @@
     force_source: yes
   loop:
     - "{{ react_client_image }}"
-    - "{{ vanilla_image }}"
     - "nginx:latest"
   register: pull_images
 
@@ -68,14 +67,6 @@
     command: echo
     state: present
 
-- name: Create vanilla container
-  become: yes
-  docker_container:
-    name: "vanilla-{{ freefeed_env }}-{{ new_env }}"
-    image: "{{ vanilla_image }}"
-    command: echo
-    state: present
-
 - name: Start nginx container
   become: yes
   docker_container:
@@ -83,7 +74,6 @@
     image: nginx:latest
     volumes_from:
       - "freefeed-react-client-{{ freefeed_env }}-{{ new_env }}"
-      - "vanilla-{{ freefeed_env }}-{{ new_env }}"
     published_ports:
       - "{{ new_port }}:80"
     volumes:
@@ -119,5 +109,4 @@
   loop:
     - "nginx-{{ freefeed_env }}-{{ old_env }}"
     - "freefeed-react-client-{{ freefeed_env }}-{{ old_env }}"
-    - "vanilla-{{ freefeed_env }}-{{ old_env }}"
 

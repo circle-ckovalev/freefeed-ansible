@@ -1,5 +1,5 @@
 [target]
-candy.freefeed.net
+circle.ckovalev.com
 
 [redis:children]
 target
@@ -10,8 +10,8 @@ target
 [frontend:children]
 target
 
-[stable:children]
+[circle:children]
 target
 
-[stable_secrets:children]
+[circle_secrets:children]
 target

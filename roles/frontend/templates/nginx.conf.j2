@@ -73,19 +73,5 @@ http {
        try_files $uri =404;
      }
    }
-{% if vanilla_enabled %}
-   server {
-     listen 80;
-     server_name {{ vanilla_hostname }};
-     access_log /var/log/nginx/{{ vanilla_hostname }}.log main;
-     include freefeed-common.conf;
-
-     location / {
-       root {{ vanilla_dir }};
-       rewrite ^/s/(.*)$ /$1 break;
-       rewrite ^.* /index.htm break;
-     }
-   }
-{% endif %}
 }
 

@@ -4,14 +4,8 @@ nginx_user: nginx
 nginx_group: nginx
 
 react_client_dir: /var/www/freefeed-react-client
-react_client_image: "freefeed/freefeed-react-client:{{ react_client_version }}"
+react_client_image: "ckovalev/freefeed-react-client:{{ react_client_version }}"
 react_client_hostname: "{{ inventory_hostname }}"
-
-vanilla_enabled: true
-vanilla_image: "freefeed/vanilla-{{ freefeed_env }}:latest"
-vanilla_dir: /var/www/vanilla
-vanilla_hostname: "{{ inventory_hostname }}"
-vanilla_lead_domain: "{{ inventory_hostname }}"
 
 local_storage_whoami_cache_key: whoamiCache
 recaptcha_client_secret: ""
