@@ -25,7 +25,7 @@ postgres_dbname: freefeed
 new_relic_app_name: "Circle"
 public_sentry_dsn: 'https://abdac1f2db2d45efaa9142062fe14bd8@sentry.io/75960'
 monitor_prefix: circle
-freefeed_external_auth_providers_enabled: false
+freefeed_external_auth_providers_enabled: true
 redis_host: "redis-{{ freefeed_env }}"
 freefeed_server_instances: 1
 freefeed_frontend_scheme: http
