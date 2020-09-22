@@ -77,6 +77,7 @@
       start_period: 15s
     state: started
     restart_policy: on-failure
+    pull: yes
   loop: "{{ range(freefeed_base_port, freefeed_base_port+freefeed_server_instances, 1) | list }}"
   loop_control:
     pause: 5
