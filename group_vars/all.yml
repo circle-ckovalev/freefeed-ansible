@@ -7,3 +7,5 @@ nginx_client_max_body_size: '50M'
 
 recaptcha_enabled: true
 recaptcha_client_secret: '6LdZhsEZAAAAAPnKYqtO6x9STgkJrRvNdIpzVmA1'
+
+google_analytics_id: 'G-ZYYXYZSV8J'
