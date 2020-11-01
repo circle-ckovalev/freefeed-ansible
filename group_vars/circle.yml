@@ -21,6 +21,7 @@ postgres_host: 172.18.0.1
 postgres_port: 5432
 postgres_user: freefeed
 postgres_dbname: freefeed
+postgres_textsearch_config: pg_catalog.russian
 
 new_relic_app_name: "Circle"
 public_sentry_dsn: 'https://abdac1f2db2d45efaa9142062fe14bd8@sentry.io/75960'
